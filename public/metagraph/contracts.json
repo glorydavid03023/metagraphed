@@ -5,189 +5,264 @@
       "contract_version": "2026-06-06.1",
       "description": "Provider/source registry.",
       "id": "providers",
-      "path": "/metagraph/providers.json"
+      "path": "/metagraph/providers.json",
+      "schema_ref": "#/components/schemas/ProvidersArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "Clean API route index for metagraph.sh consumers.",
       "id": "api-index",
-      "path": "/metagraph/api-index.json"
+      "path": "/metagraph/api-index.json",
+      "schema_ref": "#/components/schemas/ApiIndexArtifact"
+    },
+    {
+      "content_type": "application/json",
+      "contract_version": "2026-06-06.1",
+      "description": "OpenAPI 3.1 contract for the metagraph.sh backend API.",
+      "id": "openapi",
+      "path": "/metagraph/openapi.json",
+      "schema_ref": "#/components/schemas/OpenApiArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "Reviewable generated artifact and subnet-change summary.",
       "id": "changelog",
-      "path": "/metagraph/changelog.json"
+      "path": "/metagraph/changelog.json",
+      "schema_ref": "#/components/schemas/ChangelogArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "All active Finney subnets with compact registry metadata.",
       "id": "subnets",
-      "path": "/metagraph/subnets.json"
+      "path": "/metagraph/subnets.json",
+      "schema_ref": "#/components/schemas/SubnetsArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "Per-subnet detail payload.",
       "id": "subnet-detail",
-      "path": "/metagraph/subnets/{netuid}.json"
+      "path": "/metagraph/subnets/{netuid}.json",
+      "schema_ref": "#/components/schemas/SubnetDetailArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "Curated public interface surfaces only.",
       "id": "surfaces",
-      "path": "/metagraph/surfaces.json"
+      "path": "/metagraph/surfaces.json",
+      "schema_ref": "#/components/schemas/SurfacesArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "Unpromoted candidate surfaces from public discovery.",
       "id": "candidates",
-      "path": "/metagraph/candidates.json"
+      "path": "/metagraph/candidates.json",
+      "schema_ref": "#/components/schemas/CandidatesArtifact"
+    },
+    {
+      "content_type": "application/json",
+      "contract_version": "2026-06-06.1",
+      "description": "Candidate surfaces queued for maintainer review.",
+      "id": "review-queue",
+      "path": "/metagraph/review-queue.json",
+      "schema_ref": "#/components/schemas/ReviewQueueArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "Compact search index for subnets, surfaces, and providers.",
       "id": "search",
-      "path": "/metagraph/search.json"
+      "path": "/metagraph/search.json",
+      "schema_ref": "#/components/schemas/SearchArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "Registry coverage counts and source precedence.",
       "id": "coverage",
-      "path": "/metagraph/coverage.json"
+      "path": "/metagraph/coverage.json",
+      "schema_ref": "#/components/schemas/CoverageArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "Curation state and gaps for every active subnet.",
       "id": "curation",
-      "path": "/metagraph/curation.json"
+      "path": "/metagraph/curation.json",
+      "schema_ref": "#/components/schemas/CurationArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "Missing public interface facets by subnet.",
       "id": "gaps",
-      "path": "/metagraph/gaps.json"
+      "path": "/metagraph/gaps.json",
+      "schema_ref": "#/components/schemas/GapsArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "Latest candidate verification snapshot.",
       "id": "verification",
-      "path": "/metagraph/verification/latest.json"
+      "path": "/metagraph/verification/latest.json",
+      "schema_ref": "#/components/schemas/VerificationArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "Freshness and staleness summary for generated backend data.",
       "id": "freshness",
-      "path": "/metagraph/freshness.json"
+      "path": "/metagraph/freshness.json",
+      "schema_ref": "#/components/schemas/FreshnessArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "Upstream source and provider health summary.",
       "id": "source-health",
-      "path": "/metagraph/source-health.json"
+      "path": "/metagraph/source-health.json",
+      "schema_ref": "#/components/schemas/SourceHealthArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "Compact hashes and counts for canonical source inputs.",
       "id": "source-snapshots",
-      "path": "/metagraph/source-snapshots.json"
+      "path": "/metagraph/source-snapshots.json",
+      "schema_ref": "#/components/schemas/SourceSnapshotsArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "Public evidence ledger for subnet and surface claims.",
       "id": "evidence-ledger",
-      "path": "/metagraph/evidence-ledger.json"
+      "path": "/metagraph/evidence-ledger.json",
+      "schema_ref": "#/components/schemas/EvidenceLedgerArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "Latest surface health snapshot.",
       "id": "health-latest",
-      "path": "/metagraph/health/latest.json"
+      "path": "/metagraph/health/latest.json",
+      "schema_ref": "#/components/schemas/HealthLatestArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "Global and per-subnet health rollup.",
       "id": "health-summary",
-      "path": "/metagraph/health/summary.json"
+      "path": "/metagraph/health/summary.json",
+      "schema_ref": "#/components/schemas/HealthSummaryArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "Per-subnet health payload for metagraph.sh consumers.",
       "id": "health-subnet",
-      "path": "/metagraph/health/subnets/{netuid}.json"
+      "path": "/metagraph/health/subnets/{netuid}.json",
+      "schema_ref": "#/components/schemas/HealthSubnetArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "Badge data contract for status rendering.",
       "id": "health-badge",
-      "path": "/metagraph/health/badges/{netuid}.json"
+      "path": "/metagraph/health/badges/{netuid}.json",
+      "schema_ref": "#/components/schemas/HealthBadgeArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "Bittensor base-layer RPC endpoint registry and probe status.",
       "id": "rpc-endpoints",
-      "path": "/metagraph/rpc-endpoints.json"
+      "path": "/metagraph/rpc-endpoints.json",
+      "schema_ref": "#/components/schemas/RpcEndpointsArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "Endpoint pool scoring for future read-only RPC routing.",
       "id": "rpc-pools",
-      "path": "/metagraph/rpc/pools.json"
+      "path": "/metagraph/rpc/pools.json",
+      "schema_ref": "#/components/schemas/RpcPoolsArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "OpenAPI schema snapshot/drift status.",
       "id": "schema-drift",
-      "path": "/metagraph/schema-drift.json"
+      "path": "/metagraph/schema-drift.json",
+      "schema_ref": "#/components/schemas/SchemaDriftArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "Index of captured machine-readable schemas.",
       "id": "schema-index",
-      "path": "/metagraph/schemas/index.json"
+      "path": "/metagraph/schemas/index.json",
+      "schema_ref": "#/components/schemas/SchemaIndexArtifact"
+    },
+    {
+      "content_type": "application/json",
+      "contract_version": "2026-06-06.1",
+      "description": "Adapter-backed public metrics by subnet slug.",
+      "id": "adapter",
+      "path": "/metagraph/adapters/{slug}.json",
+      "schema_ref": "#/components/schemas/AdapterArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "R2 upload manifest for generated artifact history.",
       "id": "r2-manifest",
-      "path": "/metagraph/r2-manifest.json"
+      "path": "/metagraph/r2-manifest.json",
+      "schema_ref": "#/components/schemas/R2ManifestArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "Maintainer curation and adapter candidate report.",
       "id": "review-curation",
-      "path": "/metagraph/review/curation.json"
+      "path": "/metagraph/review/curation.json",
+      "schema_ref": "#/components/schemas/ReviewCurationArtifact"
+    },
+    {
+      "content_type": "application/json",
+      "contract_version": "2026-06-06.1",
+      "description": "Subnet interface gap priorities.",
+      "id": "review-gap-priorities",
+      "path": "/metagraph/review/gap-priorities.json",
+      "schema_ref": "#/components/schemas/ReviewGapPrioritiesArtifact"
+    },
+    {
+      "content_type": "application/json",
+      "contract_version": "2026-06-06.1",
+      "description": "Subnets worth deeper adapter work.",
+      "id": "review-adapter-candidates",
+      "path": "/metagraph/review/adapter-candidates.json",
+      "schema_ref": "#/components/schemas/ReviewAdapterCandidatesArtifact"
     },
     {
       "content_type": "application/json",
       "contract_version": "2026-06-06.1",
       "description": "Public-safe maintainer review decision ledger.",
       "id": "review-decisions",
-      "path": "/metagraph/review/maintainer-decisions.json"
+      "path": "/metagraph/review/maintainer-decisions.json",
+      "schema_ref": "#/components/schemas/ReviewDecisionsArtifact"
+    },
+    {
+      "content_type": "application/json",
+      "contract_version": "2026-06-06.1",
+      "description": "Generated build summary.",
+      "id": "build-summary",
+      "path": "/metagraph/build-summary.json",
+      "schema_ref": "#/components/schemas/BuildSummaryArtifact"
     }
   ],
   "base_path": "/metagraph",
@@ -200,6 +275,7 @@
     "Candidate surfaces are discovery records only and are not published as verified registry surfaces.",
     "Health and schema artifacts are operational observations, not protocol authority."
   ],
+  "openapi_url": "/metagraph/openapi.json",
   "primary_domain": "metagraph.sh",
   "schema_version": 1,
   "status_domain": null

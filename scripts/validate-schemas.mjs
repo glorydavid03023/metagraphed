@@ -1,6 +1,9 @@
 import Ajv2020 from "ajv/dist/2020.js";
+import addFormats from "ajv-formats";
 import path from "node:path";
+import { PUBLIC_ARTIFACTS } from "../src/contracts.mjs";
 import {
+  listJsonFiles,
   loadCandidates,
   loadProviders,
   loadSubnets,
@@ -12,23 +15,30 @@ const ajv = new Ajv2020({
   allErrors: true,
   allowUnionTypes: true,
   strict: false,
-  validateFormats: false
+  validateFormats: true
 });
+addFormats(ajv);
 
 const providerSchema = await readJson(path.join(repoRoot, "schemas/provider.schema.json"));
 const subnetSchema = await readJson(path.join(repoRoot, "schemas/subnet-manifest.schema.json"));
 const candidateSchema = await readJson(path.join(repoRoot, "schemas/candidate-surface.schema.json"));
-const publicArtifactsSchema = await readJson(path.join(repoRoot, "schemas/public-artifacts.schema.json"));
+const openapi = await readJson(path.join(repoRoot, "public/metagraph/openapi.json"));
 
-for (const schema of [providerSchema, subnetSchema, candidateSchema, publicArtifactsSchema]) {
+for (const schema of [providerSchema, subnetSchema, candidateSchema]) {
   ajv.addSchema(schema, schema.$id);
 }
+ajv.addSchema(
+  {
+    $id: "https://metagraph.sh/openapi-components.schema.json",
+    components: openapi.components
+  },
+  "https://metagraph.sh/openapi-components.schema.json"
+);
 
 const validators = {
   provider: ajv.getSchema(providerSchema.$id),
   subnet: ajv.getSchema(subnetSchema.$id),
-  candidate: ajv.getSchema(candidateSchema.$id),
-  artifacts: ajv.getSchema(publicArtifactsSchema.$id)
+  candidate: ajv.getSchema(candidateSchema.$id)
 };
 
 const errors = [];
@@ -45,30 +55,10 @@ for (const candidate of await loadCandidates()) {
   validate(validators.candidate, candidate, `candidate:${candidate.id}`);
 }
 
-validate(validators.artifacts, {
-  api_index: await readJson(path.join(repoRoot, "public/metagraph/api-index.json")),
-  candidates: await readJson(path.join(repoRoot, "public/metagraph/candidates.json")),
-  changelog: await readJson(path.join(repoRoot, "public/metagraph/changelog.json")),
-  contracts: await readJson(path.join(repoRoot, "public/metagraph/contracts.json")),
-  coverage: await readJson(path.join(repoRoot, "public/metagraph/coverage.json")),
-  curation: await readJson(path.join(repoRoot, "public/metagraph/curation.json")),
-  endpoint_pools: await readJson(path.join(repoRoot, "public/metagraph/rpc/pools.json")),
-  evidence_ledger: await readJson(path.join(repoRoot, "public/metagraph/evidence-ledger.json")),
-  freshness: await readJson(path.join(repoRoot, "public/metagraph/freshness.json")),
-  gaps: await readJson(path.join(repoRoot, "public/metagraph/gaps.json")),
-  health: await readJson(path.join(repoRoot, "public/metagraph/health/latest.json")),
-  providers: await readJson(path.join(repoRoot, "public/metagraph/providers.json")),
-  r2_manifest: await readJson(path.join(repoRoot, "public/metagraph/r2-manifest.json")),
-  review: await readJson(path.join(repoRoot, "public/metagraph/review/curation.json")),
-  rpc_endpoints: await readJson(path.join(repoRoot, "public/metagraph/rpc-endpoints.json")),
-  schema_drift: await readJson(path.join(repoRoot, "public/metagraph/schema-drift.json")),
-  search: await readJson(path.join(repoRoot, "public/metagraph/search.json")),
-  source_health: await readJson(path.join(repoRoot, "public/metagraph/source-health.json")),
-  source_snapshots: await readJson(path.join(repoRoot, "public/metagraph/source-snapshots.json")),
-  subnets: await readJson(path.join(repoRoot, "public/metagraph/subnets.json")),
-  surfaces: await readJson(path.join(repoRoot, "public/metagraph/surfaces.json")),
-  verification: await readJson(path.join(repoRoot, "public/metagraph/verification/latest.json"))
-}, "public-artifacts");
+for (const artifact of await artifactValidationTargets()) {
+  const validator = compileComponentValidator(artifact.schema_ref);
+  validate(validator, await readJson(artifact.file_path), `artifact:${artifact.label}`);
+}
 
 if (errors.length > 0) {
   console.error(`Schema validation failed with ${errors.length} issue(s):`);
@@ -82,6 +72,53 @@ if (errors.length > 0) {
 }
 
 console.log("JSON Schema validation passed.");
+
+async function artifactValidationTargets() {
+  const targets = [];
+  for (const artifact of PUBLIC_ARTIFACTS) {
+    if (artifact.path.includes("{netuid}")) {
+      const directory =
+        artifact.id === "subnet-detail"
+          ? path.join(repoRoot, "public/metagraph/subnets")
+          : artifact.id === "health-subnet"
+            ? path.join(repoRoot, "public/metagraph/health/subnets")
+            : path.join(repoRoot, "public/metagraph/health/badges");
+      for (const filePath of await listJsonFiles(directory)) {
+        targets.push({
+          file_path: filePath,
+          label: `${artifact.id}:${path.basename(filePath)}`,
+          schema_ref: artifact.schema_ref
+        });
+      }
+      continue;
+    }
+
+    if (artifact.path.includes("{slug}")) {
+      for (const filePath of await listJsonFiles(path.join(repoRoot, "public/metagraph/adapters"))) {
+        targets.push({
+          file_path: filePath,
+          label: `${artifact.id}:${path.basename(filePath)}`,
+          schema_ref: artifact.schema_ref
+        });
+      }
+      continue;
+    }
+
+    targets.push({
+      file_path: path.join(repoRoot, "public", artifact.path.replace(/^\/+/, "")),
+      label: artifact.id,
+      schema_ref: artifact.schema_ref
+    });
+  }
+  return targets.sort((a, b) => a.label.localeCompare(b.label));
+}
+
+function compileComponentValidator(schemaRef) {
+  const schemaName = schemaRef.replace("#/components/schemas/", "");
+  return ajv.compile({
+    $ref: `https://metagraph.sh/openapi-components.schema.json#/components/schemas/${schemaName}`
+  });
+}
 
 function validate(validator, value, label) {
   if (!validator(value)) {

@@ -40,7 +40,7 @@
         "https://github.com/latent-to/taohash/blob/main/README.md"
       ],
       "state": "schema-valid",
-      "url": "https://taohash.com/leaderboard](https://taohash.com/leaderboard"
+      "url": "https://taohash.com/leaderboard"
     },
     {
       "auth_required": false,
@@ -651,7 +651,7 @@
         "https://github.com/latent-to/taohash/blob/main/README.md"
       ],
       "state": "schema-valid",
-      "url": "https://taohash.com/leaderboard](https://taohash.com/leaderboard"
+      "url": "https://taohash.com/leaderboard"
     },
     {
       "auth_required": false,
@@ -1387,7 +1387,7 @@
       ],
       "subnet_name": "Cacheon",
       "subnet_slug": "sn-14",
-      "url": "https://taohash.com/leaderboard](https://taohash.com/leaderboard",
+      "url": "https://taohash.com/leaderboard",
       "verification": {
         "classification": "live",
         "confidence_score": 66,
@@ -1853,7 +1853,7 @@
       ],
       "subnet_name": "Cacheon",
       "subnet_slug": "sn-14",
-      "url": "https://taohash.com/leaderboard](https://taohash.com/leaderboard",
+      "url": "https://taohash.com/leaderboard",
       "verification": {
         "classification": "live",
         "confidence_score": 66,

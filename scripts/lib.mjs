@@ -175,7 +175,7 @@ export function normalizePublicUrl(value) {
     return null;
   }
 
-  let candidate = value.trim().replace(/^<|>$/g, "");
+  let candidate = value.trim().replace(/^<|>$/g, "").split("](")[0].replace(/\]+$/g, "");
   if (!candidate) {
     return null;
   }

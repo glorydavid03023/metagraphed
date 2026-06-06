@@ -3,144 +3,209 @@
     {
       "contract_version": "2026-06-06.1",
       "id": "providers",
-      "path": "/metagraph/providers.json"
+      "path": "/metagraph/providers.json",
+      "schema_ref": "#/components/schemas/ProvidersArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "api-index",
-      "path": "/metagraph/api-index.json"
+      "path": "/metagraph/api-index.json",
+      "schema_ref": "#/components/schemas/ApiIndexArtifact"
+    },
+    {
+      "contract_version": "2026-06-06.1",
+      "id": "openapi",
+      "path": "/metagraph/openapi.json",
+      "schema_ref": "#/components/schemas/OpenApiArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "changelog",
-      "path": "/metagraph/changelog.json"
+      "path": "/metagraph/changelog.json",
+      "schema_ref": "#/components/schemas/ChangelogArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "subnets",
-      "path": "/metagraph/subnets.json"
+      "path": "/metagraph/subnets.json",
+      "schema_ref": "#/components/schemas/SubnetsArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "subnet-detail",
-      "path": "/metagraph/subnets/{netuid}.json"
+      "path": "/metagraph/subnets/{netuid}.json",
+      "schema_ref": "#/components/schemas/SubnetDetailArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "surfaces",
-      "path": "/metagraph/surfaces.json"
+      "path": "/metagraph/surfaces.json",
+      "schema_ref": "#/components/schemas/SurfacesArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "candidates",
-      "path": "/metagraph/candidates.json"
+      "path": "/metagraph/candidates.json",
+      "schema_ref": "#/components/schemas/CandidatesArtifact"
+    },
+    {
+      "contract_version": "2026-06-06.1",
+      "id": "review-queue",
+      "path": "/metagraph/review-queue.json",
+      "schema_ref": "#/components/schemas/ReviewQueueArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "search",
-      "path": "/metagraph/search.json"
+      "path": "/metagraph/search.json",
+      "schema_ref": "#/components/schemas/SearchArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "coverage",
-      "path": "/metagraph/coverage.json"
+      "path": "/metagraph/coverage.json",
+      "schema_ref": "#/components/schemas/CoverageArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "curation",
-      "path": "/metagraph/curation.json"
+      "path": "/metagraph/curation.json",
+      "schema_ref": "#/components/schemas/CurationArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "gaps",
-      "path": "/metagraph/gaps.json"
+      "path": "/metagraph/gaps.json",
+      "schema_ref": "#/components/schemas/GapsArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "verification",
-      "path": "/metagraph/verification/latest.json"
+      "path": "/metagraph/verification/latest.json",
+      "schema_ref": "#/components/schemas/VerificationArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "freshness",
-      "path": "/metagraph/freshness.json"
+      "path": "/metagraph/freshness.json",
+      "schema_ref": "#/components/schemas/FreshnessArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "source-health",
-      "path": "/metagraph/source-health.json"
+      "path": "/metagraph/source-health.json",
+      "schema_ref": "#/components/schemas/SourceHealthArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "source-snapshots",
-      "path": "/metagraph/source-snapshots.json"
+      "path": "/metagraph/source-snapshots.json",
+      "schema_ref": "#/components/schemas/SourceSnapshotsArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "evidence-ledger",
-      "path": "/metagraph/evidence-ledger.json"
+      "path": "/metagraph/evidence-ledger.json",
+      "schema_ref": "#/components/schemas/EvidenceLedgerArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "health-latest",
-      "path": "/metagraph/health/latest.json"
+      "path": "/metagraph/health/latest.json",
+      "schema_ref": "#/components/schemas/HealthLatestArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "health-summary",
-      "path": "/metagraph/health/summary.json"
+      "path": "/metagraph/health/summary.json",
+      "schema_ref": "#/components/schemas/HealthSummaryArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "health-subnet",
-      "path": "/metagraph/health/subnets/{netuid}.json"
+      "path": "/metagraph/health/subnets/{netuid}.json",
+      "schema_ref": "#/components/schemas/HealthSubnetArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "health-badge",
-      "path": "/metagraph/health/badges/{netuid}.json"
+      "path": "/metagraph/health/badges/{netuid}.json",
+      "schema_ref": "#/components/schemas/HealthBadgeArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "rpc-endpoints",
-      "path": "/metagraph/rpc-endpoints.json"
+      "path": "/metagraph/rpc-endpoints.json",
+      "schema_ref": "#/components/schemas/RpcEndpointsArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "rpc-pools",
-      "path": "/metagraph/rpc/pools.json"
+      "path": "/metagraph/rpc/pools.json",
+      "schema_ref": "#/components/schemas/RpcPoolsArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "schema-drift",
-      "path": "/metagraph/schema-drift.json"
+      "path": "/metagraph/schema-drift.json",
+      "schema_ref": "#/components/schemas/SchemaDriftArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "schema-index",
-      "path": "/metagraph/schemas/index.json"
+      "path": "/metagraph/schemas/index.json",
+      "schema_ref": "#/components/schemas/SchemaIndexArtifact"
+    },
+    {
+      "contract_version": "2026-06-06.1",
+      "id": "adapter",
+      "path": "/metagraph/adapters/{slug}.json",
+      "schema_ref": "#/components/schemas/AdapterArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "r2-manifest",
-      "path": "/metagraph/r2-manifest.json"
+      "path": "/metagraph/r2-manifest.json",
+      "schema_ref": "#/components/schemas/R2ManifestArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "review-curation",
-      "path": "/metagraph/review/curation.json"
+      "path": "/metagraph/review/curation.json",
+      "schema_ref": "#/components/schemas/ReviewCurationArtifact"
+    },
+    {
+      "contract_version": "2026-06-06.1",
+      "id": "review-gap-priorities",
+      "path": "/metagraph/review/gap-priorities.json",
+      "schema_ref": "#/components/schemas/ReviewGapPrioritiesArtifact"
+    },
+    {
+      "contract_version": "2026-06-06.1",
+      "id": "review-adapter-candidates",
+      "path": "/metagraph/review/adapter-candidates.json",
+      "schema_ref": "#/components/schemas/ReviewAdapterCandidatesArtifact"
     },
     {
       "contract_version": "2026-06-06.1",
       "id": "review-decisions",
-      "path": "/metagraph/review/maintainer-decisions.json"
+      "path": "/metagraph/review/maintainer-decisions.json",
+      "schema_ref": "#/components/schemas/ReviewDecisionsArtifact"
+    },
+    {
+      "contract_version": "2026-06-06.1",
+      "id": "build-summary",
+      "path": "/metagraph/build-summary.json",
+      "schema_ref": "#/components/schemas/BuildSummaryArtifact"
     }
   ],
   "base_path": "/api/v1",
   "contract_version": "2026-06-06.1",
   "generated_at": "1970-01-01T00:00:00.000Z",
+  "openapi_url": "/api/v1/openapi.json",
   "primary_domain": "metagraph.sh",
   "response_envelope": {
+    "error_schema_ref": "#/components/schemas/ErrorEnvelope",
     "fields": [
       "ok",
       "data",
@@ -148,176 +213,422 @@
       "error"
     ],
     "notes": "Worker API routes wrap canonical /metagraph artifacts without changing artifact truth.",
-    "schema_version": 1
+    "schema_version": 1,
+    "success_schema_ref": "#/components/schemas/SuccessEnvelope"
   },
   "routes": [
+    {
+      "artifact_path": "/metagraph/api-index.json",
+      "cache": "standard",
+      "description": "List backend API routes and response envelope metadata.",
+      "id": "api-index",
+      "method": "GET",
+      "path": "/api/v1",
+      "public": true,
+      "query_parameters": []
+    },
     {
       "artifact_path": "/metagraph/subnets.json",
       "cache": "standard",
       "description": "List active Finney subnets.",
+      "id": "subnets",
       "method": "GET",
       "path": "/api/v1/subnets",
-      "public": true
+      "public": true,
+      "query_parameters": [
+        {
+          "name": "netuid",
+          "schema": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        {
+          "name": "coverage_level",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "curation_level",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "status",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "subnet_type",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
     },
     {
       "artifact_path": "/metagraph/subnets/{netuid}.json",
       "cache": "standard",
       "description": "Fetch per-subnet detail.",
+      "id": "subnet-detail",
       "method": "GET",
       "path": "/api/v1/subnets/{netuid}",
-      "public": true
+      "public": true,
+      "query_parameters": []
     },
     {
       "artifact_path": "/metagraph/surfaces.json",
       "cache": "standard",
       "description": "List curated public surfaces.",
+      "id": "surfaces",
       "method": "GET",
       "path": "/api/v1/surfaces",
-      "public": true
+      "public": true,
+      "query_parameters": [
+        {
+          "name": "netuid",
+          "schema": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        {
+          "name": "kind",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "provider",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "status",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "classification",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
     },
     {
       "artifact_path": "/metagraph/candidates.json",
       "cache": "standard",
       "description": "List unpromoted candidate surfaces.",
+      "id": "candidates",
       "method": "GET",
       "path": "/api/v1/candidates",
-      "public": true
+      "public": true,
+      "query_parameters": [
+        {
+          "name": "netuid",
+          "schema": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        {
+          "name": "kind",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "provider",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "state",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
     },
     {
       "artifact_path": "/metagraph/providers.json",
       "cache": "standard",
       "description": "List providers and sources.",
+      "id": "providers",
       "method": "GET",
       "path": "/api/v1/providers",
-      "public": true
+      "public": true,
+      "query_parameters": [
+        {
+          "name": "id",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "kind",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "authority",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
     },
     {
       "artifact_path": "/metagraph/coverage.json",
       "cache": "standard",
       "description": "Fetch registry coverage summary.",
+      "id": "coverage",
       "method": "GET",
       "path": "/api/v1/coverage",
-      "public": true
+      "public": true,
+      "query_parameters": []
     },
     {
       "artifact_path": "/metagraph/curation.json",
       "cache": "standard",
       "description": "Fetch curation states by subnet.",
+      "id": "curation",
       "method": "GET",
       "path": "/api/v1/curation",
-      "public": true
+      "public": true,
+      "query_parameters": [
+        {
+          "name": "netuid",
+          "schema": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        {
+          "name": "coverage_level",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
     },
     {
       "artifact_path": "/metagraph/gaps.json",
       "cache": "standard",
       "description": "Fetch interface gap report.",
+      "id": "gaps",
       "method": "GET",
       "path": "/api/v1/gaps",
-      "public": true
+      "public": true,
+      "query_parameters": [
+        {
+          "name": "netuid",
+          "schema": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        {
+          "name": "coverage_level",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "curation_level",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
     },
     {
       "artifact_path": "/metagraph/health/summary.json",
       "cache": "short",
       "description": "Fetch global health summary.",
+      "id": "health",
       "method": "GET",
       "path": "/api/v1/health",
-      "public": true
+      "public": true,
+      "query_parameters": []
     },
     {
       "artifact_path": "/metagraph/freshness.json",
-      "cache": "standard",
+      "cache": "short",
       "description": "Fetch freshness and staleness state.",
+      "id": "freshness",
       "method": "GET",
       "path": "/api/v1/freshness",
-      "public": true
+      "public": true,
+      "query_parameters": []
     },
     {
       "artifact_path": "/metagraph/source-health.json",
-      "cache": "standard",
+      "cache": "short",
       "description": "Fetch upstream source health.",
+      "id": "source-health",
       "method": "GET",
       "path": "/api/v1/source-health",
-      "public": true
+      "public": true,
+      "query_parameters": []
     },
     {
       "artifact_path": "/metagraph/evidence-ledger.json",
       "cache": "standard",
       "description": "Fetch public evidence ledger.",
+      "id": "evidence",
       "method": "GET",
       "path": "/api/v1/evidence",
-      "public": true
+      "public": true,
+      "query_parameters": [
+        {
+          "name": "q",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
     },
     {
       "artifact_path": "/metagraph/changelog.json",
-      "cache": "standard",
+      "cache": "short",
       "description": "Fetch latest generated change summary.",
+      "id": "changelog",
       "method": "GET",
       "path": "/api/v1/changelog",
-      "public": true
+      "public": true,
+      "query_parameters": []
     },
     {
       "artifact_path": "/metagraph/source-snapshots.json",
       "cache": "standard",
       "description": "Fetch source input hashes and counts.",
+      "id": "source-snapshots",
       "method": "GET",
       "path": "/api/v1/source-snapshots",
-      "public": true
+      "public": true,
+      "query_parameters": [
+        {
+          "name": "q",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
     },
     {
       "artifact_path": "/metagraph/rpc-endpoints.json",
       "cache": "short",
       "description": "Fetch Bittensor RPC endpoint status.",
+      "id": "rpc-endpoints",
       "method": "GET",
       "path": "/api/v1/rpc/endpoints",
-      "public": true
+      "public": true,
+      "query_parameters": [
+        {
+          "name": "kind",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "provider",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "status",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
     },
     {
       "artifact_path": "/metagraph/rpc/pools.json",
       "cache": "short",
       "description": "Fetch endpoint pool scores.",
+      "id": "rpc-pools",
       "method": "GET",
       "path": "/api/v1/rpc/pools",
-      "public": true
+      "public": true,
+      "query_parameters": []
     },
     {
       "artifact_path": "/metagraph/schemas/index.json",
       "cache": "standard",
       "description": "Fetch captured schema index.",
+      "id": "schemas",
       "method": "GET",
       "path": "/api/v1/schemas",
-      "public": true
+      "public": true,
+      "query_parameters": []
     },
     {
       "artifact_path": "/metagraph/adapters/{slug}.json",
-      "cache": "standard",
+      "cache": "short",
       "description": "Fetch adapter-backed public metrics.",
+      "id": "adapter",
       "method": "GET",
       "path": "/api/v1/adapters/{slug}",
-      "public": true
+      "public": true,
+      "query_parameters": []
     },
     {
       "artifact_path": "/metagraph/search.json",
       "cache": "standard",
       "description": "Fetch compact search index.",
+      "id": "search",
       "method": "GET",
       "path": "/api/v1/search",
-      "public": true
+      "public": true,
+      "query_parameters": [
+        {
+          "name": "q",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
     },
     {
       "artifact_path": "/metagraph/contracts.json",
       "cache": "standard",
       "description": "Fetch artifact contract metadata.",
+      "id": "contracts",
       "method": "GET",
       "path": "/api/v1/contracts",
-      "public": true
+      "public": true,
+      "query_parameters": []
+    },
+    {
+      "artifact_path": "/metagraph/openapi.json",
+      "cache": "standard",
+      "description": "Fetch OpenAPI 3.1 contract.",
+      "id": "openapi",
+      "method": "GET",
+      "path": "/api/v1/openapi.json",
+      "public": true,
+      "query_parameters": []
     },
     {
       "artifact_path": "/metagraph/build-summary.json",
-      "cache": "standard",
+      "cache": "short",
       "description": "Fetch generated build summary.",
+      "id": "build",
       "method": "GET",
       "path": "/api/v1/build",
-      "public": true
+      "public": true,
+      "query_parameters": []
     }
   ],
   "schema_version": 1

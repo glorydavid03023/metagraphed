@@ -528,7 +528,7 @@ function normalizePublicUrl(value) {
     return null;
   }
 
-  let candidate = value.trim().replace(/^<|>$/g, "");
+  let candidate = value.trim().replace(/^<|>$/g, "").split("](")[0].replace(/\]+$/g, "");
   if (!candidate || isPlaceholder(candidate)) {
     return null;
   }
@@ -661,7 +661,7 @@ async function fetchGithubReadme(repo) {
 function extractMarkdownLinks(markdown, baseUrl) {
   const links = [];
   const markdownLinkPattern = /\[([^\]]{1,120})\]\((https?:\/\/[^)\s]+)\)/g;
-  const bareUrlPattern = /https?:\/\/[^\s<>)"']+/g;
+  const bareUrlPattern = /https?:\/\/[^\s<>)"'\]]+/g;
   for (const match of markdown.matchAll(markdownLinkPattern)) {
     links.push({ label: match[1], url: normalizePublicUrl(match[2]) });
   }

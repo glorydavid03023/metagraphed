@@ -1,6 +1,6 @@
 {
-  "artifact_count": 419,
-  "artifact_size_bytes": 12258645,
+  "artifact_count": 420,
+  "artifact_size_bytes": 12354658,
   "artifacts": [
     {
       "content_type": "application/json",
@@ -21,28 +21,28 @@
       "key": "runs/1970-01-01T00-00-00-000Z/api-index.json",
       "latest_key": "latest/api-index.json",
       "path": "/metagraph/api-index.json",
-      "size_bytes": 8691
+      "size_bytes": 16843
     },
     {
       "content_type": "application/json",
       "key": "runs/1970-01-01T00-00-00-000Z/candidates.json",
       "latest_key": "latest/candidates.json",
       "path": "/metagraph/candidates.json",
-      "size_bytes": 1845806
+      "size_bytes": 1845740
     },
     {
       "content_type": "application/json",
       "key": "runs/1970-01-01T00-00-00-000Z/changelog.json",
       "latest_key": "latest/changelog.json",
       "path": "/metagraph/changelog.json",
-      "size_bytes": 1903
+      "size_bytes": 2447
     },
     {
       "content_type": "application/json",
       "key": "runs/1970-01-01T00-00-00-000Z/contracts.json",
       "latest_key": "latest/contracts.json",
       "path": "/metagraph/contracts.json",
-      "size_bytes": 7137
+      "size_bytes": 10730
     },
     {
       "content_type": "application/json",
@@ -987,14 +987,14 @@
       "key": "runs/1970-01-01T00-00-00-000Z/health/history/2026-06-06.json",
       "latest_key": "latest/health/history/2026-06-06.json",
       "path": "/metagraph/health/history/2026-06-06.json",
-      "size_bytes": 485662
+      "size_bytes": 485629
     },
     {
       "content_type": "application/json",
       "key": "runs/1970-01-01T00-00-00-000Z/health/latest.json",
       "latest_key": "latest/health/latest.json",
       "path": "/metagraph/health/latest.json",
-      "size_bytes": 485662
+      "size_bytes": 485629
     },
     {
       "content_type": "application/json",
@@ -1246,7 +1246,7 @@
       "key": "runs/1970-01-01T00-00-00-000Z/health/subnets/14.json",
       "latest_key": "latest/health/subnets/14.json",
       "path": "/metagraph/health/subnets/14.json",
-      "size_bytes": 9622
+      "size_bytes": 9589
     },
     {
       "content_type": "application/json",
@@ -1915,6 +1915,13 @@
     },
     {
       "content_type": "application/json",
+      "key": "runs/1970-01-01T00-00-00-000Z/openapi.json",
+      "latest_key": "latest/openapi.json",
+      "path": "/metagraph/openapi.json",
+      "size_bytes": 84186
+    },
+    {
+      "content_type": "application/json",
       "key": "runs/1970-01-01T00-00-00-000Z/providers.json",
       "latest_key": "latest/providers.json",
       "path": "/metagraph/providers.json",
@@ -1925,7 +1932,7 @@
       "key": "runs/1970-01-01T00-00-00-000Z/review-queue.json",
       "latest_key": "latest/review-queue.json",
       "path": "/metagraph/review-queue.json",
-      "size_bytes": 1845788
+      "size_bytes": 1845722
     },
     {
       "content_type": "application/json",
@@ -1995,7 +2002,7 @@
       "key": "runs/1970-01-01T00-00-00-000Z/search.json",
       "latest_key": "latest/search.json",
       "path": "/metagraph/search.json",
-      "size_bytes": 330107
+      "size_bytes": 330074
     },
     {
       "content_type": "application/json",
@@ -2268,7 +2275,7 @@
       "key": "runs/1970-01-01T00-00-00-000Z/subnets/14.json",
       "latest_key": "latest/subnets/14.json",
       "path": "/metagraph/subnets/14.json",
-      "size_bytes": 88266
+      "size_bytes": 88134
     },
     {
       "content_type": "application/json",
@@ -2926,14 +2933,14 @@
       "key": "runs/1970-01-01T00-00-00-000Z/surfaces.json",
       "latest_key": "latest/surfaces.json",
       "path": "/metagraph/surfaces.json",
-      "size_bytes": 834403
+      "size_bytes": 834370
     },
     {
       "content_type": "application/json",
       "key": "runs/1970-01-01T00-00-00-000Z/verification/latest.json",
       "latest_key": "latest/verification/latest.json",
       "path": "/metagraph/verification/latest.json",
-      "size_bytes": 968160
+      "size_bytes": 968127
     }
   ],
   "bucket_binding": "METAGRAPH_ARCHIVE",

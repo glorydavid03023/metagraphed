@@ -396,10 +396,10 @@ async function validateGeneratedArtifacts(nativeSnapshot, overlays, candidates) 
   assert(apiIndexArtifact.primary_domain === "metagraph.sh", "api index: primary_domain must be metagraph.sh");
   assert(Array.isArray(apiIndexArtifact.routes), "api index: routes must be an array");
   assert(
-    apiIndexArtifact.routes.every((route) => String(route.path || "").startsWith("/api/v1/")),
+    apiIndexArtifact.routes.every((route) => route.path === "/api/v1" || String(route.path || "").startsWith("/api/v1/")),
     "api index: routes must stay under /api/v1"
   );
-  for (const expectedRoute of ["/api/v1/changelog", "/api/v1/source-snapshots", "/api/v1/contracts", "/api/v1/build"]) {
+  for (const expectedRoute of ["/api/v1/changelog", "/api/v1/source-snapshots", "/api/v1/contracts", "/api/v1/openapi.json", "/api/v1/build"]) {
     assert(apiIndexArtifact.routes.some((route) => route.path === expectedRoute), `api index: missing ${expectedRoute}`);
   }
   assert(changelogArtifact.summary, "changelog: summary is required");

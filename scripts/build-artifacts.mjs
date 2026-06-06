@@ -17,6 +17,12 @@ import {
   slugify,
   writeJson
 } from "./lib.mjs";
+import {
+  CONTRACT_VERSION,
+  buildApiIndexArtifact,
+  buildContractsArtifact,
+  buildOpenApiArtifact
+} from "../src/contracts.mjs";
 
 const providers = await loadProviders();
 const overlays = await loadSubnets();
@@ -37,7 +43,7 @@ const activeOverlays = overlays.filter((overlay) => activeOverlayNetuids.has(ove
 const surfaces = flattenSurfaces(activeOverlays);
 const outputRoot = path.join(repoRoot, "public/metagraph");
 const generatedAt = buildTimestamp();
-const contractVersion = "2026-06-06.1";
+const contractVersion = CONTRACT_VERSION;
 const previousArtifactDigests = await collectArtifactDigests(outputRoot);
 const previousSubnetsArtifact = await readOptionalJson(path.join(outputRoot, "subnets.json"));
 const previousCoverageArtifact = await readOptionalJson(path.join(outputRoot, "coverage.json"));
@@ -117,7 +123,8 @@ const rpcEndpoints = buildRpcEndpointArtifact({
 });
 const curationReview = buildCurationReview(mergedSubnets, surfaces, candidates, verification, reviewDecisions);
 const schemaDriftPlaceholder = buildSchemaDriftPlaceholder(surfaces);
-const contracts = buildContracts();
+const contracts = buildContractsArtifact(generatedAt);
+const openApi = buildOpenApiArtifact(generatedAt);
 
 const adapterArtifacts = Object.fromEntries(
   activeOverlays
@@ -283,7 +290,8 @@ for (const [netuid, badge] of healthArtifacts.badges) {
 }
 await writeJson(path.join(outputRoot, "coverage.json"), coverage);
 await writeJson(path.join(outputRoot, "contracts.json"), contracts);
-await writeJson(path.join(outputRoot, "api-index.json"), buildApiIndex(contracts));
+await writeJson(path.join(outputRoot, "api-index.json"), buildApiIndexArtifact(generatedAt, contracts));
+await writeJson(path.join(outputRoot, "openapi.json"), openApi);
 await writeJson(path.join(outputRoot, "search.json"), buildSearchIndex(mergedSubnets, surfaces, providers));
 await writeJson(path.join(outputRoot, "freshness.json"), buildFreshnessArtifact({
   adapterSnapshots,
@@ -666,119 +674,6 @@ function buildSchemaDriftPlaceholder(surfaces) {
       schema_url: surface.schema_url || null,
       status: surface.schema_url ? "pending-snapshot" : "ui-only-or-undiscovered"
     }))
-  };
-}
-
-function buildContracts() {
-  return {
-    schema_version: 1,
-    contract_version: contractVersion,
-    generated_at: generatedAt,
-    name: "Metagraphed public backend artifact contract",
-    primary_domain: "metagraph.sh",
-    status_domain: null,
-    base_path: "/metagraph",
-    notes: [
-      "Native Bittensor chain data is canonical for active subnet existence.",
-      "Curated overlays are canonical for public interface metadata.",
-      "Candidate surfaces are discovery records only and are not published as verified registry surfaces.",
-      "Health and schema artifacts are operational observations, not protocol authority."
-    ],
-    artifacts: [
-      artifactContract("providers", "/metagraph/providers.json", "Provider/source registry."),
-      artifactContract("api-index", "/metagraph/api-index.json", "Clean API route index for metagraph.sh consumers."),
-      artifactContract("changelog", "/metagraph/changelog.json", "Reviewable generated artifact and subnet-change summary."),
-      artifactContract("subnets", "/metagraph/subnets.json", "All active Finney subnets with compact registry metadata."),
-      artifactContract("subnet-detail", "/metagraph/subnets/{netuid}.json", "Per-subnet detail payload."),
-      artifactContract("surfaces", "/metagraph/surfaces.json", "Curated public interface surfaces only."),
-      artifactContract("candidates", "/metagraph/candidates.json", "Unpromoted candidate surfaces from public discovery."),
-      artifactContract("search", "/metagraph/search.json", "Compact search index for subnets, surfaces, and providers."),
-      artifactContract("coverage", "/metagraph/coverage.json", "Registry coverage counts and source precedence."),
-      artifactContract("curation", "/metagraph/curation.json", "Curation state and gaps for every active subnet."),
-      artifactContract("gaps", "/metagraph/gaps.json", "Missing public interface facets by subnet."),
-      artifactContract("verification", "/metagraph/verification/latest.json", "Latest candidate verification snapshot."),
-      artifactContract("freshness", "/metagraph/freshness.json", "Freshness and staleness summary for generated backend data."),
-      artifactContract("source-health", "/metagraph/source-health.json", "Upstream source and provider health summary."),
-      artifactContract("source-snapshots", "/metagraph/source-snapshots.json", "Compact hashes and counts for canonical source inputs."),
-      artifactContract("evidence-ledger", "/metagraph/evidence-ledger.json", "Public evidence ledger for subnet and surface claims."),
-      artifactContract("health-latest", "/metagraph/health/latest.json", "Latest surface health snapshot."),
-      artifactContract("health-summary", "/metagraph/health/summary.json", "Global and per-subnet health rollup."),
-      artifactContract("health-subnet", "/metagraph/health/subnets/{netuid}.json", "Per-subnet health payload for metagraph.sh consumers."),
-      artifactContract("health-badge", "/metagraph/health/badges/{netuid}.json", "Badge data contract for status rendering."),
-      artifactContract("rpc-endpoints", "/metagraph/rpc-endpoints.json", "Bittensor base-layer RPC endpoint registry and probe status."),
-      artifactContract("rpc-pools", "/metagraph/rpc/pools.json", "Endpoint pool scoring for future read-only RPC routing."),
-      artifactContract("schema-drift", "/metagraph/schema-drift.json", "OpenAPI schema snapshot/drift status."),
-      artifactContract("schema-index", "/metagraph/schemas/index.json", "Index of captured machine-readable schemas."),
-      artifactContract("r2-manifest", "/metagraph/r2-manifest.json", "R2 upload manifest for generated artifact history."),
-      artifactContract("review-curation", "/metagraph/review/curation.json", "Maintainer curation and adapter candidate report."),
-      artifactContract("review-decisions", "/metagraph/review/maintainer-decisions.json", "Public-safe maintainer review decision ledger.")
-    ]
-  };
-}
-
-function artifactContract(id, pathValue, description) {
-  return {
-    id,
-    path: pathValue,
-    description,
-    content_type: "application/json",
-    contract_version: contractVersion
-  };
-}
-
-function buildApiIndex(contractsArtifact) {
-  const routes = [
-    apiRoute("GET", "/api/v1/subnets", "/metagraph/subnets.json", "List active Finney subnets."),
-    apiRoute("GET", "/api/v1/subnets/{netuid}", "/metagraph/subnets/{netuid}.json", "Fetch per-subnet detail."),
-    apiRoute("GET", "/api/v1/surfaces", "/metagraph/surfaces.json", "List curated public surfaces."),
-    apiRoute("GET", "/api/v1/candidates", "/metagraph/candidates.json", "List unpromoted candidate surfaces."),
-    apiRoute("GET", "/api/v1/providers", "/metagraph/providers.json", "List providers and sources."),
-    apiRoute("GET", "/api/v1/coverage", "/metagraph/coverage.json", "Fetch registry coverage summary."),
-    apiRoute("GET", "/api/v1/curation", "/metagraph/curation.json", "Fetch curation states by subnet."),
-    apiRoute("GET", "/api/v1/gaps", "/metagraph/gaps.json", "Fetch interface gap report."),
-    apiRoute("GET", "/api/v1/health", "/metagraph/health/summary.json", "Fetch global health summary."),
-    apiRoute("GET", "/api/v1/freshness", "/metagraph/freshness.json", "Fetch freshness and staleness state."),
-    apiRoute("GET", "/api/v1/source-health", "/metagraph/source-health.json", "Fetch upstream source health."),
-    apiRoute("GET", "/api/v1/evidence", "/metagraph/evidence-ledger.json", "Fetch public evidence ledger."),
-    apiRoute("GET", "/api/v1/changelog", "/metagraph/changelog.json", "Fetch latest generated change summary."),
-    apiRoute("GET", "/api/v1/source-snapshots", "/metagraph/source-snapshots.json", "Fetch source input hashes and counts."),
-    apiRoute("GET", "/api/v1/rpc/endpoints", "/metagraph/rpc-endpoints.json", "Fetch Bittensor RPC endpoint status."),
-    apiRoute("GET", "/api/v1/rpc/pools", "/metagraph/rpc/pools.json", "Fetch endpoint pool scores."),
-    apiRoute("GET", "/api/v1/schemas", "/metagraph/schemas/index.json", "Fetch captured schema index."),
-    apiRoute("GET", "/api/v1/adapters/{slug}", "/metagraph/adapters/{slug}.json", "Fetch adapter-backed public metrics."),
-    apiRoute("GET", "/api/v1/search", "/metagraph/search.json", "Fetch compact search index."),
-    apiRoute("GET", "/api/v1/contracts", "/metagraph/contracts.json", "Fetch artifact contract metadata."),
-    apiRoute("GET", "/api/v1/build", "/metagraph/build-summary.json", "Fetch generated build summary.")
-  ];
-
-  return {
-    schema_version: 1,
-    contract_version: contractVersion,
-    generated_at: generatedAt,
-    primary_domain: "metagraph.sh",
-    base_path: "/api/v1",
-    response_envelope: {
-      schema_version: 1,
-      fields: ["ok", "data", "meta", "error"],
-      notes: "Worker API routes wrap canonical /metagraph artifacts without changing artifact truth."
-    },
-    routes,
-    artifact_contracts: contractsArtifact.artifacts.map((artifact) => ({
-      id: artifact.id,
-      path: artifact.path,
-      contract_version: artifact.contract_version
-    }))
-  };
-}
-
-function apiRoute(method, pathValue, artifact_path, description) {
-  return {
-    artifact_path,
-    cache: pathValue.includes("/health") || pathValue.includes("/rpc/") ? "short" : "standard",
-    description,
-    method,
-    path: pathValue,
-    public: true
   };
 }
 

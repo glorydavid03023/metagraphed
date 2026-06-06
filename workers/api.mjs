@@ -1,36 +1,20 @@
-const CONTRACT_VERSION = "2026-06-06.1";
+import {
+  API_ROUTES,
+  CACHE_SECONDS,
+  CONTRACT_VERSION,
+  artifactPathFromTemplate,
+  compileRoutePattern
+} from "../src/contracts.mjs";
+
 const JSON_CONTENT_TYPE = "application/json; charset=utf-8";
 
-const ROUTES = [
-  route(/^\/api\/v1\/?$/, "/metagraph/api-index.json", "standard"),
-  route(/^\/api\/v1\/subnets\/?$/, "/metagraph/subnets.json", "standard"),
-  route(/^\/api\/v1\/subnets\/(?<netuid>\d+)\/?$/, ({ netuid }) => `/metagraph/subnets/${netuid}.json`, "standard"),
-  route(/^\/api\/v1\/surfaces\/?$/, "/metagraph/surfaces.json", "standard"),
-  route(/^\/api\/v1\/candidates\/?$/, "/metagraph/candidates.json", "standard"),
-  route(/^\/api\/v1\/providers\/?$/, "/metagraph/providers.json", "standard"),
-  route(/^\/api\/v1\/coverage\/?$/, "/metagraph/coverage.json", "standard"),
-  route(/^\/api\/v1\/curation\/?$/, "/metagraph/curation.json", "standard"),
-  route(/^\/api\/v1\/gaps\/?$/, "/metagraph/gaps.json", "standard"),
-  route(/^\/api\/v1\/health\/?$/, "/metagraph/health/summary.json", "short"),
-  route(/^\/api\/v1\/freshness\/?$/, "/metagraph/freshness.json", "short"),
-  route(/^\/api\/v1\/source-health\/?$/, "/metagraph/source-health.json", "short"),
-  route(/^\/api\/v1\/evidence\/?$/, "/metagraph/evidence-ledger.json", "standard"),
-  route(/^\/api\/v1\/changelog\/?$/, "/metagraph/changelog.json", "short"),
-  route(/^\/api\/v1\/source-snapshots\/?$/, "/metagraph/source-snapshots.json", "standard"),
-  route(/^\/api\/v1\/rpc\/endpoints\/?$/, "/metagraph/rpc-endpoints.json", "short"),
-  route(/^\/api\/v1\/rpc\/pools\/?$/, "/metagraph/rpc/pools.json", "short"),
-  route(/^\/api\/v1\/schemas\/?$/, "/metagraph/schemas/index.json", "standard"),
-  route(/^\/api\/v1\/adapters\/(?<slug>[a-z0-9-]+)\/?$/, ({ slug }) => `/metagraph/adapters/${slug}.json`, "short"),
-  route(/^\/api\/v1\/search\/?$/, "/metagraph/search.json", "standard"),
-  route(/^\/api\/v1\/contracts\/?$/, "/metagraph/contracts.json", "standard"),
-  route(/^\/api\/v1\/build\/?$/, "/metagraph/build-summary.json", "short")
-];
-
-const CACHE_SECONDS = {
-  short: 60,
-  standard: 300,
-  static: 600
-};
+const ROUTES = API_ROUTES.map((entry) => ({
+  ...entry,
+  pattern: compileRoutePattern(entry.path),
+  artifactPath(params) {
+    return artifactPathFromTemplate(entry.artifact_path, params);
+  }
+}));
 
 const SAFE_RPC_METHODS = new Set(["chain_getHeader", "chain_getBlockHash", "system_health", "rpc_methods"]);
 const DENIED_RPC_PREFIXES = ["author_", "state_call", "sudo_", "payment_", "contracts_"];
@@ -177,7 +161,7 @@ function matchRoute(pathname) {
     }
     const params = match.groups || {};
     return {
-      artifactPath: typeof candidate.artifactPath === "function" ? candidate.artifactPath(params) : candidate.artifactPath,
+      artifactPath: candidate.artifactPath(params),
       cache: candidate.cache,
       params
     };
@@ -413,8 +397,4 @@ function isSafeRpcMethod(method) {
     return false;
   }
   return SAFE_RPC_METHODS.has(method);
-}
-
-function route(pattern, artifactPath, cache = "standard") {
-  return { pattern, artifactPath, cache };
 }

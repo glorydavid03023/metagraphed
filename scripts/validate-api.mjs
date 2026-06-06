@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import { API_ROUTES } from "../src/contracts.mjs";
 import { handleRequest } from "../workers/api.mjs";
 import { repoRoot } from "./lib.mjs";
 
@@ -46,8 +47,11 @@ const checks = [
   ["/api/v1/adapters/allways", (body) => assert.equal(body.data.slug, "allways")],
   ["/api/v1/search?q=allways", (body) => assert.equal(body.data.documents.length > 0, true)],
   ["/api/v1/contracts", (body) => assert.equal(body.data.primary_domain, "metagraph.sh")],
+  ["/api/v1/openapi.json", (body) => assert.equal(body.data.openapi, "3.1.0")],
   ["/api/v1/build", (body) => assert.equal(Number.isInteger(body.data.artifact_count), true)]
 ];
+
+assert.equal(checks.length, API_ROUTES.length, "API validation checks must cover every configured API route");
 
 for (const [route, assertion] of checks) {
   const response = await handleRequest(new Request(`https://metagraph.sh${route}`), env, {});
