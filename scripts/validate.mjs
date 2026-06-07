@@ -34,11 +34,14 @@ const authorities = new Set([
 const subnetStatuses = new Set(["active", "inactive", "unknown"]);
 
 const surfaceKinds = new Set([
+  "archive",
   "subtensor-rpc",
   "subtensor-wss",
   "subnet-api",
   "openapi",
   "sse",
+  "sdk",
+  "example",
   "website",
   "source-repo",
   "dashboard",
@@ -120,11 +123,11 @@ function validateProvider(provider) {
     isValidUrl(provider.website_url),
     `${provider.id}: website_url must be a URL`,
   );
-  if (provider.docs_url !== undefined) {
-    assert(
-      isValidUrl(provider.docs_url),
-      `${provider.id}: docs_url must be a URL`,
-    );
+  for (const key of ["docs_url", "github_url", "team_url", "contact_url"]) {
+    if (provider[key] === undefined) {
+      continue;
+    }
+    assert(isValidUrl(provider[key]), `${provider.id}: ${key} must be a URL`);
   }
   assert(
     authorities.has(provider.authority),
@@ -720,6 +723,9 @@ async function validateGeneratedArtifacts(
   const rpcEndpointsArtifact = await readJson(
     path.join(repoRoot, "public/metagraph/rpc-endpoints.json"),
   );
+  const endpointsArtifact = await readJson(
+    path.join(repoRoot, "public/metagraph/endpoints.json"),
+  );
   const endpointPoolsArtifact = await readJson(
     path.join(repoRoot, "public/metagraph/rpc/pools.json"),
   );
@@ -766,6 +772,10 @@ async function validateGeneratedArtifacts(
     activeNetuids.has(overlay.netuid),
   );
   const surfaces = flattenSurfaces(activeOverlays);
+  const endpointsByNetuid = Map.groupBy(
+    endpointsArtifact.endpoints || [],
+    (endpoint) => endpoint.netuid,
+  );
   const expectedSubnetsByNetuid = new Map(
     nativeSnapshot.subnets.map((nativeSubnet) => [
       nativeSubnet.netuid,
@@ -801,12 +811,14 @@ async function validateGeneratedArtifacts(
       const subnetSurfaces = surfaces.filter(
         (surface) => surface.netuid === subnet.netuid,
       );
+      const subnetEndpoints = endpointsByNetuid.get(subnet.netuid) || [];
       const expectedDetailArtifact = {
         schema_version: 1,
         generated_at: subnetsArtifact.generated_at,
         subnet: expectedSubnetsByNetuid.get(subnet.netuid),
         candidate_surfaces: subnetCandidates,
         candidates: subnetCandidates,
+        endpoints: subnetEndpoints,
         gaps: expectedSubnetsByNetuid.get(subnet.netuid)?.gaps,
         surfaces: subnetSurfaces,
         verified_surfaces: subnetSurfaces,

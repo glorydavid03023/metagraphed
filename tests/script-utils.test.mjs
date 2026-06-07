@@ -8,6 +8,7 @@ import {
   summarizeArtifactBudgets,
 } from "../scripts/artifact-budgets.mjs";
 import {
+  buildEndpointResourceArtifact,
   buildEndpointPoolArtifact,
   buildRpcEndpointArtifact,
   buildTimestamp,
@@ -216,6 +217,15 @@ describe("script utility contracts", () => {
             public_safe: true,
           },
           {
+            id: "root-data",
+            kind: "data-artifact",
+            url: "https://data.example.com/root.json",
+            provider: "example",
+            authority: "provider-claimed",
+            auth_required: false,
+            public_safe: true,
+          },
+          {
             id: "root-wss",
             kind: "subtensor-wss",
             url: "wss://rpc.example.com",
@@ -272,6 +282,44 @@ describe("script utility contracts", () => {
     assert.equal(rpc.summary.endpoint_count, 3);
     assert.equal(rpc.summary.archive_supported_count, 1);
     assert.equal(rpc.endpoints[0].method_tested, "chain_getHeader");
+
+    const endpointResources = buildEndpointResourceArtifact({
+      surfaces,
+      healthSurfaces: [
+        {
+          surface_id: "root-rpc",
+          status: "ok",
+          classification: "live",
+          latency_ms: 50,
+          archive_support: true,
+          latest_block: 100,
+          methods_supported: { chain_getHeader: true, rpc_methods: true },
+          verified_at: "1970-01-01T00:00:00.000Z",
+        },
+      ],
+      generatedAt: "1970-01-01T00:00:00.000Z",
+      contractVersion: "test",
+      source: "fixture",
+    });
+    assert.equal(endpointResources.summary.endpoint_count, 5);
+    assert.equal(
+      endpointResources.endpoints.find(
+        (endpoint) => endpoint.surface_id === "root-docs",
+      ).layer,
+      "docs-provider",
+    );
+    assert.equal(
+      endpointResources.endpoints.find(
+        (endpoint) => endpoint.surface_id === "root-data",
+      ).layer,
+      "data-provider",
+    );
+    assert.equal(
+      endpointResources.endpoints.find(
+        (endpoint) => endpoint.surface_id === "root-rpc",
+      ).publication_state,
+      "pool-eligible",
+    );
 
     const pools = buildEndpointPoolArtifact({
       generatedAt: "1970-01-01T00:00:00.000Z",
