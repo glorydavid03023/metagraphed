@@ -11,7 +11,7 @@ name: Refresh Chain Events (first-party poller)
 # (block_number, event_index)), so frequent overlapping runs need no cursor and
 # self-heal small gaps. Live-forward only: public nodes prune ~300 blocks, so this
 # runs often to stay inside that window; deep history is the optional archive-RPC
-# upgrade (#1349). No new secret — uses the existing CLOUDFLARE_* R2 permission.
+# upgrade (#1349). Reuses METAGRAPH_STAGING_SIGNING_KEY (same as refresh-metagraph).
 on:
   schedule:
     # Every 5 min (#1346 Option A) — the practical CI floor (each run has ~3 min of
@@ -90,6 +90,11 @@ jobs:
           # Emit a ::warning:: (and webhook alert, if configured) when the cursor
           # falls within a window of the public-RPC prune horizon.
           METAGRAPH_ALERT_WEBHOOK_URL: ${{ secrets.METAGRAPH_ALERT_WEBHOOK_URL }}
+
+      - name: Sign staged chain-event batch
+        run: node scripts/sign-staged-neurons.mjs dist/account-events.json
+        env:
+          METAGRAPH_STAGING_SIGNING_KEY: ${{ secrets.METAGRAPH_STAGING_SIGNING_KEY }}
 
       # Stage to R2 (the token's existing R2 permission); the Worker loads it into
       # D1 through its binding (loadStagedEvents) — no API-token D1 permission.
