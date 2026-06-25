@@ -125,21 +125,66 @@ export function formatExtrinsic(row) {
 
 // Per-extrinsic detail artifact. `extrinsic` is null when the ref didn't resolve
 // (cold store or unknown extrinsic) — schema-stable, never throws (mirrors the
-// block detail route's `block:null`).
-export function buildExtrinsic(row, ref) {
+// block detail route's `block:null`). `events` are the indexed account_events this
+// extrinsic emitted (#1849), already formatted + bounded by the handler; defaults
+// to [] (empty for pre-migration rows, non-ApplyExtrinsic events, or a cold store).
+export function buildExtrinsic(row, ref, events = []) {
   return {
     schema_version: 1,
     ref: ref ?? null,
     extrinsic: formatExtrinsic(row),
+    events: events || [],
   };
 }
 
 // Recent-extrinsic feed artifact (newest first). Null-safe on a cold/absent store
-// (returns a schema-stable zero).
-export function buildExtrinsicFeed(rows, { limit, offset } = {}) {
+// (returns a schema-stable zero). next_cursor (#1851) is the opaque keyset token
+// for the next page, or null at end-of-window; the caller computes it.
+export function buildExtrinsicFeed(rows, { limit, offset, nextCursor } = {}) {
   const extrinsics = (rows || []).map(formatExtrinsic).filter(Boolean);
   return {
     schema_version: 1,
+    extrinsic_count: extrinsics.length,
+    limit: limit ?? null,
+    offset: offset ?? null,
+    next_cursor: nextCursor ?? null,
+    extrinsics,
+  };
+}
+
+// Per-account signed-extrinsic feed artifact (#1844, newest first). The account's
+// extrinsics are matched by the extrinsic SIGNER only, NOT the hotkey or coldkey
+// union the account_events routes use — `extrinsics` carries a single `signer`
+// column. extrinsic_count is the PAGE count (matches the feed + account-events
+// convention), not a grand total. Null-safe on a cold store.
+export function buildAccountExtrinsics(rows, ss58, { limit, offset } = {}) {
+  const extrinsics = (rows || []).map(formatExtrinsic).filter(Boolean);
+  return {
+    schema_version: 1,
+    ss58,
+    extrinsic_count: extrinsics.length,
+    limit: limit ?? null,
+    offset: offset ?? null,
+    extrinsics,
+  };
+}
+
+// Per-block extrinsics sub-resource artifact (#1845): the extrinsics in one block,
+// in natural read order (extrinsic_index ASC) — note this differs from the global
+// feed's newest-first DESC; both are covered by the (block_number, extrinsic_index)
+// PK. block_number is null + extrinsics:[] when the ref didn't resolve (cold store
+// or unknown block) — schema-stable, never throws.
+export function buildBlockExtrinsics(
+  rows,
+  ref,
+  blockNumber,
+  { limit, offset } = {},
+) {
+  const extrinsics = (rows || []).map(formatExtrinsic).filter(Boolean);
+  return {
+    schema_version: 1,
+    ref: ref ?? null,
+    block_number: blockNumber ?? null,
     extrinsic_count: extrinsics.length,
     limit: limit ?? null,
     offset: offset ?? null,
