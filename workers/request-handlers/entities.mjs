@@ -48,6 +48,7 @@ import {
   buildAccountSubnets,
   buildAccountSummary,
   buildAccountTransfers,
+  buildAccountHistory,
   buildSubnetEvents,
   buildBlockEvents,
   formatAccountEvent,
@@ -358,6 +359,73 @@ export async function handleAccountEvents(request, env, ss58, url) {
   );
 }
 
+// GET /api/v1/accounts/{ss58}/history (#1854): the durable per-day activity
+// series for an account, from the account_events_daily rollup. ?netuid filters
+// to one subnet; ?from / ?to are YYYY-MM-DD bounds (lexicographic on the TEXT
+// `day` column); ?limit (<=1000) / ?offset. Newest day first. Cold/absent store
+// → schema-stable zero (never 404).
+//
+// SCOPE: the rollup writes only hotkey-attributed rows, so an ss58 with no
+// hotkey activity returns zero days even when /events shows activity — a
+// documented limitation of the hotkey-keyed rollup, not a bug (the contract
+// description spells out the contrast with /events in full).
+const ACCOUNT_DAY_COLUMNS =
+  "day, netuid, event_count, event_kinds, first_block, last_block";
+const DAY_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+export async function handleAccountHistory(request, env, ss58, url) {
+  const validationError = validateQueryParams(url, [
+    "netuid",
+    "from",
+    "to",
+    "limit",
+    "offset",
+  ]);
+  if (validationError) return analyticsQueryError(validationError);
+  const from = url.searchParams.get("from");
+  const to = url.searchParams.get("to");
+  if ((from && !DAY_RE.test(from)) || (to && !DAY_RE.test(to))) {
+    return errorResponse(
+      "invalid_param",
+      "from/to must be YYYY-MM-DD dates.",
+      400,
+    );
+  }
+  const limit = clampInt(url.searchParams.get("limit"), 100, 1, 1000);
+  const offset = clampInt(url.searchParams.get("offset"), 0, 0, 1_000_000);
+  const netuid = url.searchParams.get("netuid");
+  const params = [ss58];
+  let sql = `SELECT ${ACCOUNT_DAY_COLUMNS} FROM account_events_daily WHERE hotkey = ?`;
+  if (netuid != null && /^\d+$/.test(netuid)) {
+    sql += " AND netuid = ?";
+    params.push(Number(netuid));
+  }
+  if (from) {
+    sql += " AND day >= ?";
+    params.push(from);
+  }
+  if (to) {
+    sql += " AND day <= ?";
+    params.push(to);
+  }
+  sql += " ORDER BY day DESC LIMIT ? OFFSET ?";
+  params.push(limit, offset);
+  const rows = await d1All(env, sql, params);
+  const data = buildAccountHistory(rows, ss58, { limit, offset });
+  return envelopeResponse(
+    request,
+    {
+      data,
+      meta: await accountMeta(
+        env,
+        `/metagraph/accounts/${ss58}/history.json`,
+        null,
+      ),
+    },
+    "short",
+  );
+}
+
 // GET /api/v1/accounts/{ss58}/extrinsics: the extrinsics this account SIGNED
 // (newest first), from the extrinsics D1 tier (#1844). Matched by the extrinsic
 // signer only — NOT the hotkey or coldkey union the account_events routes use,
@@ -652,7 +720,23 @@ export async function handleBlock(request, env, ref) {
     : `SELECT ${BLOCK_READ_COLUMNS} FROM blocks WHERE block_number = ? LIMIT 1`;
   const param = isHash ? ref : Number(ref);
   const rows = await d1All(env, sql, [param]);
-  const data = buildBlock(rows[0], ref);
+  // prev/next chain-walk neighbors (#1853): one bounded query for the nearest
+  // STORED block numbers around the resolved height (skips pruned gaps; null at
+  // the window edges). Derived from the resolved row's number (works for the hash
+  // path too). Only when the block resolved — a cold/unknown ref has no anchor.
+  let prev = null;
+  let next = null;
+  const resolvedNumber = rows[0]?.block_number;
+  if (Number.isInteger(resolvedNumber)) {
+    const nbr = await d1All(
+      env,
+      `SELECT MAX(CASE WHEN block_number < ? THEN block_number END) AS prev, MIN(CASE WHEN block_number > ? THEN block_number END) AS next FROM blocks`,
+      [resolvedNumber, resolvedNumber],
+    );
+    prev = nbr[0]?.prev ?? null;
+    next = nbr[0]?.next ?? null;
+  }
+  const data = buildBlock(rows[0], ref, { prev, next });
   return envelopeResponse(
     request,
     {
