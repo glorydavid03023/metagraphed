@@ -67,6 +67,7 @@ import {
   handleSubnetHistory,
   handleSubnetConcentration,
   handleSubnetConcentrationHistory,
+  canonicalSubnetConcentrationHistoryCachePath,
   handleAccount,
   handleAccountHistory,
   handleAccountBalance,
@@ -141,6 +142,7 @@ import {
   overlayCatalogDetail,
   overlayCatalogIndex,
   overlayOverviewHealth,
+  overlayRpcPoolEligibility,
   overlaySubnetEconomics,
   overlaySubnetHealth,
   resolveLiveEconomics,
@@ -258,6 +260,7 @@ const LIVE_OVERLAY_ROUTE_IDS = new Set([
   "health",
   "subnet-health",
   "rpc-endpoints",
+  "rpc-pools",
   "freshness",
   "subnet-overview",
   "agent-catalog",
@@ -848,8 +851,28 @@ export async function handleRequest(request, env = {}, ctx = {}) {
   // (e.g. a preview deploy without the data Worker).
   if (
     url.pathname === "/api/v1/chain-events" ||
+    url.pathname === "/api/v1/chain-events/stats" ||
     /^\/api\/v1\/blocks\/\d+\/chain-events$/.test(url.pathname)
   ) {
+    if (env.DATA_RATE_LIMITER?.limit) {
+      const { success } = await env.DATA_RATE_LIMITER.limit({
+        key: `data:${resolveClientIp(request)}`,
+      });
+      if (!success) {
+        return errorResponse(
+          "data_rate_limited",
+          "Too many data API requests from this client; slow down.",
+          429,
+          {},
+          {
+            "retry-after": "60",
+            "x-ratelimit-limit": "60",
+            "x-ratelimit-policy": "60;w=60",
+            "x-ratelimit-remaining": "0",
+          },
+        );
+      }
+    }
     if (env.DATA_API) return env.DATA_API.fetch(request);
     return new Response(JSON.stringify({ error: "data tier unavailable" }), {
       status: 503,
@@ -1127,6 +1150,7 @@ export async function handleRequest(request, env = {}, ctx = {}) {
             Number(concentrationHistoryMatch[1]),
             resolved.url,
           ),
+        canonicalSubnetConcentrationHistoryCachePath(resolved.url),
       );
     }
     const concentrationMatch = SUBNET_CONCENTRATION_PATH_PATTERN.exec(
@@ -2889,6 +2913,7 @@ function unknownSubnetHealth(netuid) {
 const ENDPOINT_OVERLAY_EXCLUDED_IDS = new Set([
   "subnet-health",
   "rpc-endpoints",
+  "rpc-pools",
   "freshness",
   "agent-catalog",
   "agent-catalog-subnet",
@@ -2921,6 +2946,32 @@ async function liveHealthOverlay(env, matched, staticData) {
     case "rpc-endpoints": {
       const pool = await readHealthKv(env, KV_HEALTH_RPC_POOL);
       data = mergeRpcEndpoints(staticData, pool);
+      break;
+    }
+    case "rpc-pools": {
+      // The served pool scores feed the public RPC load-balancer (deploy/wss-lb)
+      // and the proxy's pool selection. Overlay the same 15-minute cron health the
+      // HTTP proxy applies (overlayRpcPoolEligibility) so a sustained-down/wrong-chain
+      // upstream baked into the static artifact is marked ineligible instead of being
+      // routed to. Each pool in pools[] shares the per-endpoint shape the overlay
+      // expects; without a live snapshot the pools pass through unchanged.
+      const livePool = await readHealthKv(env, KV_HEALTH_RPC_POOL);
+      if (
+        livePool &&
+        Array.isArray(livePool.endpoints) &&
+        Array.isArray(staticData?.pools)
+      ) {
+        data = {
+          ...staticData,
+          source: "live-cron-prober",
+          operational_observed_at: livePool.last_run_at || null,
+          pools: staticData.pools.map((pool) =>
+            overlayRpcPoolEligibility(pool, livePool),
+          ),
+        };
+      } else {
+        data = null;
+      }
       break;
     }
     case "freshness": {
