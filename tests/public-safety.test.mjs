@@ -198,6 +198,30 @@ describe("captured-fixture body scan", () => {
     }
   });
 
+  test("flags secrets under compound (multi-segment) credential names", async () => {
+    // The token-like assignment rule must catch underscore/hyphen-joined key
+    // names of any depth — a leading \b has no boundary after the underscore in a
+    // compound name, so client_secret / google_oauth_client_secret /
+    // database_user_password would otherwise slip past. Bare secret=/password=
+    // must keep matching; a short value must not.
+    const leaks = [
+      "client_secret=abcdefghijklmnop1234",
+      "google_oauth_client_secret=abcdefghijklmnop1234",
+      "database_user_password=abcdefghijklmnop1234",
+      "secret=abcdefghijklmnop1234",
+    ];
+    await fs.writeFile(TEST_PUBLIC_PATH, `${leaks.join("\n")}\n`, "utf8");
+    const output = runScanOutput();
+    for (const [index] of leaks.entries()) {
+      assert.ok(
+        output.includes(
+          `${TEST_PUBLIC_FILE}:${index + 1}: token-like assignment`,
+        ),
+        `secret on line ${index + 1} must be flagged; got:\n${output}`,
+      );
+    }
+  });
+
   test("does not flag soft Bittensor terminology in a mirrored fixture body", async () => {
     // Regression for the publish-wedging false positive: upstream API docs
     // legitimately say "miner hotkey" / "validator hotkey path".
